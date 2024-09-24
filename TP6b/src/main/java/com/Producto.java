@@ -36,6 +36,26 @@ public class Producto implements Comparable <Producto> {
     public String getRubro() {
         return rubro;
     }
+
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public void setRubro(String rubro) {
+        this.rubro = rubro;
+    }
     
     
 

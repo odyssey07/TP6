@@ -4,6 +4,9 @@
  */
 package com;
 
+import java.util.Arrays;
+import java.util.TreeSet;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -11,6 +14,10 @@ import javax.swing.table.DefaultTableModel;
  * @author Ulises
  */
 public class VistaAdmin extends javax.swing.JInternalFrame {
+    Producto productoSeleccionado = null;
+    Integer filaSel = null;
+    private static int c = 0;
+    
     private DefaultTableModel modelo = new DefaultTableModel() {
         public boolean isCellEditable(int f, int c) {
             return false; // Todas las celdas no van a ser editables.
@@ -57,12 +64,18 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
         btnGuardar = new javax.swing.JButton();
         btnActualizar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
-        btnBuscar = new javax.swing.JButton();
+        btnReiniciar = new javax.swing.JButton();
 
         setClosable(true);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel1.setText("Gestión de productos");
+
+        comboboxCategorias.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboboxCategoriasItemStateChanged(evt);
+            }
+        });
 
         jLabel2.setText("Filtrar por categoría");
 
@@ -95,6 +108,30 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
         jLabel6.setText("Rubro");
 
         jLabel7.setText("Stock");
+
+        inputCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputCodigoKeyReleased(evt);
+            }
+        });
+
+        inputDescripcion.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputDescripcionKeyReleased(evt);
+            }
+        });
+
+        inputPrecio.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputPrecioKeyReleased(evt);
+            }
+        });
+
+        inputComboBoxRubro.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                inputComboBoxRubroItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -158,8 +195,18 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
         });
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -168,10 +215,10 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
             }
         });
 
-        btnBuscar.setText("Buscar");
-        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+        btnReiniciar.setText("Reiniciar");
+        btnReiniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarActionPerformed(evt);
+                btnReiniciarActionPerformed(evt);
             }
         });
 
@@ -191,20 +238,21 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
                         .addComponent(comboboxCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(36, 36, 36)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnNuevo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnGuardar)
-                                .addGap(48, 48, 48)
-                                .addComponent(btnActualizar)
-                                .addGap(46, 46, 46)
-                                .addComponent(btnEliminar))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(btnNuevo)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnGuardar)
+                                    .addGap(48, 48, 48)
+                                    .addComponent(btnActualizar)
+                                    .addGap(46, 46, 46)
+                                    .addComponent(btnEliminar))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnBuscar)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnReiniciar)))))
                 .addContainerGap(38, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -218,17 +266,19 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnNuevo)
-                            .addComponent(btnGuardar)
-                            .addComponent(btnActualizar)
-                            .addComponent(btnEliminar)))
-                    .addComponent(btnBuscar))
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(82, 82, 82)
+                        .addComponent(btnReiniciar)))
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNuevo)
+                    .addComponent(btnGuardar)
+                    .addComponent(btnActualizar)
+                    .addComponent(btnEliminar))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -236,26 +286,32 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:        
+        btnEliminar.setEnabled(false);
+        btnActualizar.setEnabled(false);
+        cargarTabla();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnEliminarActionPerformed
-
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
+//        System.out.println(productoSeleccionado);
+//        System.out.println(DeTodoSA.productos.size());
+        DeTodoSA.productos.remove(productoSeleccionado);
+//        System.out.println(DeTodoSA.productos.size());
         
-    }//GEN-LAST:event_btnBuscarActionPerformed
+        cargarTabla();
+        btnEliminar.setEnabled(false);
+        btnActualizar.setEnabled(false);
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
         // TODO add your handling code here:
-        int filaSel = tabla.getSelectedRow();
-//        for(int col=0; col<5; col++) {
-//            System.out.println(tabla.getValueAt(filaSel,col).getClass());
-//        }
-//        
-        Producto productoSeleccionado = new Producto(
+        btnActualizar.setEnabled(true);
+        btnEliminar.setEnabled(true);
+        btnGuardar.setEnabled(false);
+        filaSel = tabla.getSelectedRow();
+        
+        productoSeleccionado = new Producto(
             (int) tabla.getValueAt(filaSel, 0),
             (String) tabla.getValueAt(filaSel, 1),
             (double) tabla.getValueAt(filaSel, 2),
@@ -265,19 +321,98 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
         
         System.out.println(productoSeleccionado);
         
-//        String c1 = productoSeleccionado.getDescripcion();
-        for(Producto p : DeTodoSA.productos) {            
-            System.out.println(productoSeleccionado.equals(p));
-        }
     }//GEN-LAST:event_tablaMouseClicked
+
+    private void btnReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReiniciarActionPerformed
+        // TODO add your handling code here:
+        inputCodigo.setText("");
+        inputDescripcion.setText("");
+        inputPrecio.setText("");
+        inputComboBoxRubro.setSelectedItem(null);
+        inputSpinnerStock.setValue(0);
+        
+        comboboxCategorias.setSelectedItem(null);
+        btnEliminar.setEnabled(false);
+        btnGuardar.setEnabled(false);
+        cargarTabla();
+    }//GEN-LAST:event_btnReiniciarActionPerformed
+
+    private void inputCodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputCodigoKeyReleased
+        // TODO add your handling code here:
+        validarGuardar();
+    }//GEN-LAST:event_inputCodigoKeyReleased
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        // TODO add your handling code here:
+        String[] datos = datosActuales();
+        
+        // Modificar la tabla 
+        // El stock no se cuenta como null, entonces pasa derecho
+        for (int i=0; i<datos.length; i++) {
+            if(datos[i] != null) {
+                tabla.setValueAt(datos[i], filaSel, i);
+            }
+        }
+        
+        DeTodoSA.productos.remove(productoSeleccionado);
+        
+        if(datos[0] != null) productoSeleccionado.setCodigo(Integer.parseInt(datos[0]));
+        if(datos[1] != null) productoSeleccionado.setDescripcion(datos[1]);
+        if(datos[2] != null) productoSeleccionado.setPrecio(Double.parseDouble(datos[2]));
+        if(datos[3] != null) productoSeleccionado.setRubro(datos[3]);
+        if(datos[4] != null) productoSeleccionado.setStock(Integer.parseInt(datos[4]));
+        
+        // Borrar y agregar el producto seleccionado al TreeSet
+        DeTodoSA.productos.add(productoSeleccionado);        
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void inputDescripcionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputDescripcionKeyReleased
+        // TODO add your handling code here:
+        validarGuardar();
+    }//GEN-LAST:event_inputDescripcionKeyReleased
+
+    private void inputPrecioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputPrecioKeyReleased
+        // TODO add your handling code here:
+        validarGuardar();
+    }//GEN-LAST:event_inputPrecioKeyReleased
+
+    private void inputComboBoxRubroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_inputComboBoxRubroItemStateChanged
+        // TODO add your handling code here:
+        validarGuardar();
+    }//GEN-LAST:event_inputComboBoxRubroItemStateChanged
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        if(validarGuardar()) guardar();
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void comboboxCategoriasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboboxCategoriasItemStateChanged
+        // TODO add your handling code here
+
+        // Tuve que hacer esto porque se me ejecutaba dos veces el codigo...
+       
+        c++;
+        
+        if(c % 2 != 0) {
+            TreeSet<Producto> productosFiltrados = new TreeSet<>();
+            for (Producto p : DeTodoSA.productos) {
+                if (p.getRubro().equals((String) comboboxCategorias.getSelectedItem())) {
+                    System.out.println(p);
+                    productosFiltrados.add(p);
+                }
+            }
+            
+            cargarTablaFiltrada(productosFiltrados);
+        }
+    }//GEN-LAST:event_comboboxCategoriasItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnActualizar;
-    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
+    private javax.swing.JButton btnReiniciar;
     private javax.swing.JComboBox<String> comboboxCategorias;
     private javax.swing.JTextField inputCodigo;
     private javax.swing.JComboBox<String> inputComboBoxRubro;
@@ -305,8 +440,27 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
         tabla.setModel(modelo);
         
         modelo.setRowCount(0);
+        cargarTabla();
+    }
+    
+    private void cargarTabla() {
+        modelo.setRowCount(0);
         
         for (Producto p : DeTodoSA.productos) {            
+            modelo.addRow(new Object[]{
+                p.getCodigo(),
+                p.getDescripcion(),
+                p.getPrecio(),
+                p.getRubro(),
+                p.getStock()
+            });
+        }
+    }
+    
+    private void cargarTablaFiltrada(TreeSet<Producto> setDeProductos) {
+        modelo.setRowCount(0);
+        
+        for (Producto p : setDeProductos) {            
             modelo.addRow(new Object[]{
                 p.getCodigo(),
                 p.getDescripcion(),
@@ -330,18 +484,91 @@ public class VistaAdmin extends javax.swing.JInternalFrame {
     }
     
     private String[] datosActuales() {
-        // 0 - Codigo, 1 - Descripcion, 2 - Precio, etc...
+        // 0 - Codigo, 1 - Descripcion, 2 - Precio, 3 - Rubro, 4 - Stock
+        boolean malCodigo = false, malPrecio = false;
+        String codigo = null, precio = null;
         
-        inputSpinnerStock.getValue();
-        inputCodigo.getText(); // Tiene que ser un numero
-        inputDescripcion.getText();
-        inputComboBoxRubro.getSelectedItem(); // Tengo que castearlo?
-        inputPrecio.getText(); // Tiene que ser double
+        if(!inputCodigo.getText().equals("")) {
+            try {
+                codigo = Integer.parseInt(inputCodigo.getText())+"";
+            } catch (NumberFormatException e) {
+                malCodigo = true;
+            }
+        }
         
-        return null;
+        if(!inputPrecio.getText().equals("")) {
+            try {
+                precio = Double.parseDouble(inputPrecio.getText())+"";
+            } catch (NumberFormatException e) {
+                malPrecio = true;
+            }
+        }
+        
+        if (malPrecio && malCodigo) {
+            JOptionPane.showMessageDialog(this,"Ambos mal");
+        } else if (malPrecio) {
+            JOptionPane.showMessageDialog(this,"Mal precio");
+        } else if (malCodigo) {
+            JOptionPane.showMessageDialog(this,"Mal codigo");
+        }
+        
+        if (malCodigo || malPrecio) return new String[]{null, null, null, null, null};
+
+        String[] resultado = new String[] {
+            codigo,
+            inputDescripcion.getText().equals("") ? null : inputDescripcion.getText(),
+            precio,
+            (String) inputComboBoxRubro.getSelectedItem(),
+            inputSpinnerStock.getValue()+""
+        };
+        
+        return resultado;
     }
     
-    private boolean validarInputs() {
-        return false;
+    private boolean validarGuardar() {        
+        for (String s : datosActuales()) {
+            if(s == null) {
+                return false;
+            }
+        }
+        
+        btnGuardar.setEnabled(true);
+        return true;
     }
+    
+    private void guardar() {
+          String[] datos = datosActuales();
+          Producto nuevoProducto = new Producto(
+               Integer.parseInt(datos[0]),
+               datos[1],
+               Double.parseDouble(datos[2]),
+               Integer.parseInt(datos[4]),
+               datos[3]               
+          );
+          
+          boolean anadir = true;
+          for (Producto p : DeTodoSA.productos) {
+              if (p.getCodigo() == nuevoProducto.getCodigo()) {
+                  anadir = false;
+                  break;
+              }
+          }
+          
+          if (anadir) {
+              DeTodoSA.productos.add(nuevoProducto);
+              cargarTabla();
+          } else {
+              JOptionPane.showMessageDialog(this,"Ese código ya existe para algún otro producto.");
+          }
+    }
+    
+//    private void validarActualizar() {
+//        // Validar que este el codigo
+//        boolean comp1 = datosActuales()[0] != null;        
+//        
+//        // Ver que haya alguna fila seleccionada
+//        boolean comp2 = tabla.getSelectedRow() >= 0;
+//        
+//        if (comp1 && comp2) btnActualizar.setEnabled(true);
+//    }
 }
